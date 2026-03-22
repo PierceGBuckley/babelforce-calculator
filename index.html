@@ -1,0 +1,219 @@
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans,system-ui,sans-serif);font-size:14px;color:var(--color-text-primary,#1a1a1a);padding:1.5rem;background:transparent}
+h1{font-size:22px;font-weight:500;margin-bottom:0.25rem}
+.subtitle{font-size:14px;color:var(--color-text-secondary,#666);margin-bottom:2rem}
+h2{font-size:16px;font-weight:500;margin-bottom:1rem}
+.section{border:0.5px solid var(--color-border-tertiary,#e0e0e0);border-radius:12px;padding:1.25rem;margin-bottom:1rem}
+.field{margin-bottom:1rem}
+label{display:block;font-size:12px;color:var(--color-text-secondary,#666);margin-bottom:3px}
+input[type=number]{width:100%;padding:6px 10px;border:0.5px solid var(--color-border-secondary,#ccc);border-radius:8px;background:var(--color-background-primary,#fff);color:var(--color-text-primary,#1a1a1a);font-size:14px;font-family:inherit}
+input[type=range]{width:100%;margin:4px 0}
+.grid4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1rem}
+.channel{background:var(--color-background-secondary,#f5f5f5);border-radius:8px;padding:1rem}
+.channel-name{font-size:13px;font-weight:500;margin-bottom:0.75rem}
+.pct-row{display:flex;align-items:center;gap:8px;margin-bottom:0.5rem}
+.pct-val{font-size:13px;font-weight:500;min-width:36px;text-align:right}
+.vol-large{font-size:20px;font-weight:500}
+.vol-sub{font-size:11px;color:var(--color-text-secondary,#666);margin-bottom:0.75rem}
+.peak-row{margin-bottom:0.5rem}
+.peak-label{font-size:11px;color:var(--color-text-secondary,#666);margin-bottom:2px}
+.peak-input{width:100%;padding:5px 8px;border:0.5px solid var(--color-border-secondary,#ccc);border-radius:6px;background:var(--color-background-primary,#fff);color:var(--color-text-primary,#1a1a1a);font-size:13px;font-family:inherit}
+.peak-input.edited{border-color:#185FA5}
+.reset-btn{font-size:11px;color:var(--color-text-secondary,#666);background:none;border:none;cursor:pointer;padding:0;margin-top:6px;text-decoration:underline}
+.reset-btn:hover{color:var(--color-text-primary,#1a1a1a)}
+.warn{font-size:12px;color:#c0392b;margin-top:6px;min-height:16px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:right;padding:7px 10px;border-bottom:0.5px solid var(--color-border-secondary,#ccc);color:var(--color-text-secondary,#666);font-weight:500}
+th:first-child{text-align:left}
+td{padding:7px 10px;border-bottom:0.5px solid var(--color-border-tertiary,#eee);text-align:right;font-variant-numeric:tabular-nums}
+td:first-child{text-align:left;font-weight:500}
+.total-row td{border-top:0.5px solid var(--color-border-secondary,#ccc);border-bottom:none;font-weight:500}
+</style>
+
+<h1>Contact centre traffic profile</h1>
+<p class="subtitle">Set your monthly interaction volumes and channel split. Peak estimates are pre-filled and editable.</p>
+
+<div class="section">
+  <h2>Average monthly inbound interactions</h2>
+  <div class="field">
+    <label>Average per month tickets and requests of all kinds</label>
+    <input type="number" id="total" value="10000" min="1" oninput="onTotalChange()">
+  </div>
+</div>
+
+<div class="section">
+  <h2>Channel split</h2>
+  <p style="font-size:12px;color:var(--color-text-secondary,#666);margin-bottom:1rem">Adjust sliders to set each channel's share. Other absorbs any remainder. Blue border = manually edited value.</p>
+  <div class="grid4" id="channels_grid"></div>
+  <div class="warn" id="pct_warn"></div>
+</div>
+
+<div class="section">
+  <h2>Traffic profile summary</h2>
+  <div style="overflow-x:auto">
+    <table id="summary_table">
+      <thead>
+        <tr>
+          <th style="text-align:left">Channel</th>
+          <th>Avg / month</th>
+          <th>Peak month</th>
+          <th>Avg / day</th>
+          <th>Peak day</th>
+          <th>Avg / hour</th>
+          <th>Peak hour</th>
+        </tr>
+      </thead>
+      <tbody id="summary_tbody"></tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+var WD=20, HPD=8, PEAK_FACTOR=3;
+var CHANNELS=[
+  {id:'voice',name:'Voice',pct:40,color:'#185FA5'},
+  {id:'email',name:'Email',pct:30,color:'#0F6E56'},
+  {id:'chat', name:'Chat', pct:20,color:'#854F0B'},
+  {id:'other',name:'Other',pct:10,color:'#993556'}
+];
+var overrides={};
+CHANNELS.forEach(function(c){
+  overrides[c.id]={peakMonth:null,peakDay:null,peakHour:null};
+});
+
+function calcEstimates(vol){
+  var peakMonth=Math.round(vol*2);
+  var peakDay=Math.round((vol/WD)*PEAK_FACTOR);
+  var peakHour=Math.round((peakDay/HPD)*PEAK_FACTOR);
+  return{peakMonth:peakMonth,peakDay:peakDay,peakHour:peakHour};
+}
+
+function getVol(ch){
+  var total=+document.getElementById('total').value||0;
+  return Math.round(total*ch.pct/100);
+}
+
+function buildChannelUI(){
+  var grid=document.getElementById('channels_grid');
+  grid.innerHTML='';
+  CHANNELS.forEach(function(ch){
+    var vol=getVol(ch);
+    var est=calcEstimates(vol);
+    var pm=overrides[ch.id].peakMonth!==null?overrides[ch.id].peakMonth:est.peakMonth;
+    var pd=overrides[ch.id].peakDay!==null?overrides[ch.id].peakDay:est.peakDay;
+    var ph=overrides[ch.id].peakHour!==null?overrides[ch.id].peakHour:est.peakHour;
+    var div=document.createElement('div');
+    div.className='channel';
+    div.innerHTML=
+      '<div class="channel-name" style="color:'+ch.color+'">'+ch.name+'</div>'+
+      '<div class="pct-row">'+
+        '<input type="range" min="0" max="100" step="1" value="'+ch.pct+'" id="sl_'+ch.id+'" oninput="onSliderChange(\''+ch.id+'\')">'+
+        '<span class="pct-val" id="pv_'+ch.id+'">'+ch.pct+'%</span>'+
+      '</div>'+
+      '<div class="vol-large" id="vv_'+ch.id+'">'+vol.toLocaleString()+'</div>'+
+      '<div class="vol-sub">avg interactions / month</div>'+
+      '<div class="peak-row">'+
+        '<div class="peak-label">Peak month</div>'+
+        '<input type="number" class="peak-input'+(overrides[ch.id].peakMonth!==null?' edited':'')+'" id="pm_'+ch.id+'" value="'+pm+'" oninput="onPeakEdit(\''+ch.id+'\',\'peakMonth\')">'+
+      '</div>'+
+      '<div class="peak-row">'+
+        '<div class="peak-label">Peak day</div>'+
+        '<input type="number" class="peak-input'+(overrides[ch.id].peakDay!==null?' edited':'')+'" id="pd_'+ch.id+'" value="'+pd+'" oninput="onPeakEdit(\''+ch.id+'\',\'peakDay\')">'+
+      '</div>'+
+      '<div class="peak-row">'+
+        '<div class="peak-label">Peak hour</div>'+
+        '<input type="number" class="peak-input'+(overrides[ch.id].peakHour!==null?' edited':'')+'" id="ph_'+ch.id+'" value="'+ph+'" oninput="onPeakEdit(\''+ch.id+'\',\'peakHour\')">'+
+      '</div>'+
+      '<button class="reset-btn" onclick="resetChannel(\''+ch.id+'\')">Reset to estimates</button>';
+    grid.appendChild(div);
+  });
+}
+
+function onPeakEdit(chId,field){
+  var elId=(field==='peakMonth'?'pm_':field==='peakDay'?'pd_':'ph_')+chId;
+  overrides[chId][field]=+document.getElementById(elId).value;
+  document.getElementById(elId).classList.add('edited');
+  updateSummary();
+}
+
+function resetChannel(chId){
+  overrides[chId]={peakMonth:null,peakDay:null,peakHour:null};
+  var ch=CHANNELS.find(function(c){return c.id===chId;});
+  var est=calcEstimates(getVol(ch));
+  document.getElementById('pm_'+chId).value=est.peakMonth;
+  document.getElementById('pd_'+chId).value=est.peakDay;
+  document.getElementById('ph_'+chId).value=est.peakHour;
+  ['pm_','pd_','ph_'].forEach(function(p){
+    document.getElementById(p+chId).classList.remove('edited');
+  });
+  updateSummary();
+}
+
+function onTotalChange(){
+  CHANNELS.forEach(function(ch){
+    var vol=getVol(ch);
+    document.getElementById('vv_'+ch.id).textContent=vol.toLocaleString();
+    var est=calcEstimates(vol);
+    if(overrides[ch.id].peakMonth===null) document.getElementById('pm_'+ch.id).value=est.peakMonth;
+    if(overrides[ch.id].peakDay===null)   document.getElementById('pd_'+ch.id).value=est.peakDay;
+    if(overrides[ch.id].peakHour===null)  document.getElementById('ph_'+ch.id).value=est.peakHour;
+  });
+  updateSummary();
+}
+
+function onSliderChange(changedId){
+  var newVal=+document.getElementById('sl_'+changedId).value;
+  CHANNELS.find(function(c){return c.id===changedId;}).pct=newVal;
+  var sumExceptLast=0;
+  for(var i=0;i<CHANNELS.length-1;i++) sumExceptLast+=CHANNELS[i].pct;
+  var remainder=Math.max(0,100-sumExceptLast);
+  CHANNELS[CHANNELS.length-1].pct=remainder;
+  var lastId=CHANNELS[CHANNELS.length-1].id;
+  document.getElementById('sl_'+lastId).value=remainder;
+  document.getElementById('pv_'+lastId).textContent=remainder+'%';
+  CHANNELS.forEach(function(ch){
+    document.getElementById('pv_'+ch.id).textContent=ch.pct+'%';
+    var vol=getVol(ch);
+    document.getElementById('vv_'+ch.id).textContent=vol.toLocaleString();
+    var est=calcEstimates(vol);
+    if(overrides[ch.id].peakMonth===null) document.getElementById('pm_'+ch.id).value=est.peakMonth;
+    if(overrides[ch.id].peakDay===null)   document.getElementById('pd_'+ch.id).value=est.peakDay;
+    if(overrides[ch.id].peakHour===null)  document.getElementById('ph_'+ch.id).value=est.peakHour;
+  });
+  var sum=CHANNELS.reduce(function(a,c){return a+c.pct;},0);
+  document.getElementById('pct_warn').textContent=Math.abs(sum-100)>0.5?'Channel percentages sum to '+sum+'% — should total 100%.':'';
+  updateSummary();
+}
+
+function updateSummary(){
+  var total=+document.getElementById('total').value||0;
+  var tbody=document.getElementById('summary_tbody');
+  tbody.innerHTML='';
+  var sums=[0,0,0,0,0,0]; // avgMonth, peakMonth, avgDay, peakDay, avgHour, peakHour
+  CHANNELS.forEach(function(ch){
+    var vol=getVol(ch);
+    var avgDay=Math.round(vol/WD);
+    var avgHour=Math.round(vol/WD/HPD);
+    var pm=+document.getElementById('pm_'+ch.id).value||0;
+    var pd=+document.getElementById('pd_'+ch.id).value||0;
+    var ph=+document.getElementById('ph_'+ch.id).value||0;
+    var vals=[vol,pm,avgDay,pd,avgHour,ph];
+    vals.forEach(function(v,i){sums[i]+=v;});
+    var tr=document.createElement('tr');
+    var html='<td style="color:'+ch.color+'">'+ch.name+'</td>';
+    vals.forEach(function(v){html+='<td>'+v.toLocaleString()+'</td>';});
+    tr.innerHTML=html;
+    tbody.appendChild(tr);
+  });
+  var tfoot=document.createElement('tr');
+  tfoot.className='total-row';
+  var fhtml='<td>Total</td>';
+  sums.forEach(function(v){fhtml+='<td>'+v.toLocaleString()+'</td>';});
+  tfoot.innerHTML=fhtml;
+  tbody.appendChild(tfoot);
+}
+
+buildChannelUI();
+updateSummary();
+</script>
