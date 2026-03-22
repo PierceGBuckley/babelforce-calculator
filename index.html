@@ -1,99 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>babelforce — Contact Centre Calculator</title>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,300;0,400;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
+:root{
+  --maroon:#3A0823;
+  --navy:#181E32;
+  --stone:#F7F7F3;
+  --sand:#FBEACF;
+  --orange:#F94721;
+  --mint:#CAF2DD;
+  --mint-lite:#E8FCF5;
+  --lilac:#B2A9FD;
+  --white:#FFFFFF;
+  --text-primary:#181E32;
+  --text-secondary:#5a5f72;
+  --border:#ddddd8;
+  --border-light:#eeeee9;
+}
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:var(--font-sans,system-ui,sans-serif);font-size:14px;color:var(--color-text-primary,#1a1a1a);padding:1.5rem;background:transparent}
-h1{font-size:22px;font-weight:500;margin-bottom:0.25rem}
-.subtitle{font-size:14px;color:var(--color-text-secondary,#666);margin-bottom:2rem}
-h2{font-size:16px;font-weight:500;margin-bottom:1rem}
-.section{border:0.5px solid var(--color-border-tertiary,#e0e0e0);border-radius:12px;padding:1.25rem;margin-bottom:1rem}
+body{font-family:'DM Sans',system-ui,sans-serif;font-size:14px;color:var(--text-primary);background:var(--stone);min-height:100vh}
+
+/* Header */
+.header{background:var(--white);border-bottom:1px solid var(--border);padding:0 2rem;height:56px;display:flex;align-items:center;justify-content:space-between}
+.header img{height:22px;width:auto}
+.header-title{font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text-secondary);font-weight:400}
+
+/* Progress bar */
+.progress-bar{background:var(--white);border-bottom:1px solid var(--border);padding:0 2rem;display:flex;align-items:center;gap:0;height:44px}
+.step{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text-secondary);padding:0 1rem 0 0}
+.step:first-child{padding-left:0}
+.step-num{width:20px;height:20px;border-radius:50%;border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;flex-shrink:0}
+.step.active .step-num{background:var(--maroon);border-color:var(--maroon);color:var(--white)}
+.step.active .step-label{color:var(--text-primary);font-weight:500}
+.step-divider{width:24px;height:1px;background:var(--border);margin:0 4px;flex-shrink:0}
+
+/* Main layout */
+.main{max-width:860px;margin:0 auto;padding:2rem 1.5rem 4rem}
+
+/* Page title */
+.page-title{margin-bottom:2rem}
+.page-title h1{font-family:'Spectral',serif;font-size:28px;font-weight:300;color:var(--navy);margin-bottom:6px}
+.page-title p{font-size:14px;color:var(--text-secondary);line-height:1.6}
+
+/* Sections */
+.section{background:var(--white);border:1px solid var(--border);border-radius:8px;padding:1.5rem;margin-bottom:1.25rem}
+.section-title{font-family:'Spectral',serif;font-size:18px;font-weight:300;color:var(--navy);margin-bottom:4px}
+.section-sub{font-size:13px;color:var(--text-secondary);margin-bottom:1.25rem;line-height:1.5}
+
+/* Fields */
 .field{margin-bottom:1rem}
-label{display:block;font-size:12px;color:var(--color-text-secondary,#666);margin-bottom:3px}
-input[type=number]{width:100%;padding:6px 10px;border:0.5px solid var(--color-border-secondary,#ccc);border-radius:8px;background:var(--color-background-primary,#fff);color:var(--color-text-primary,#1a1a1a);font-size:14px;font-family:inherit}
-input[type=range]{width:100%;margin:4px 0}
+.field:last-child{margin-bottom:0}
+label{display:block;font-size:12px;color:var(--text-secondary);margin-bottom:4px;font-weight:400}
+input[type=number]{width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:6px;background:var(--white);color:var(--text-primary);font-size:14px;font-family:'DM Sans',sans-serif;transition:border-color 0.15s}
+input[type=number]:focus{outline:none;border-color:var(--navy)}
+input[type=range]{width:100%;margin:6px 0;accent-color:var(--maroon)}
+
+/* Grid layouts */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
 .grid4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1rem}
-.channel{background:var(--color-background-secondary,#f5f5f5);border-radius:8px;padding:1rem}
+
+/* Channel cards */
+.channel{background:var(--stone);border:1px solid var(--border-light);border-radius:8px;padding:1rem}
 .channel-name{font-size:13px;font-weight:500;margin-bottom:0.75rem}
-.pct-row{display:flex;align-items:center;gap:8px;margin-bottom:0.5rem}
-.pct-val{font-size:13px;font-weight:500;min-width:36px;text-align:right}
-.vol-large{font-size:20px;font-weight:500}
-.vol-sub{font-size:11px;color:var(--color-text-secondary,#666);margin-bottom:0.75rem}
+.pct-row{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.pct-val{font-size:13px;font-weight:500;min-width:36px;text-align:right;color:var(--text-primary)}
+.vol-large{font-family:'Spectral',serif;font-size:22px;font-weight:300;color:var(--navy);margin-top:6px}
+.vol-sub{font-size:11px;color:var(--text-secondary);margin-bottom:0.75rem}
 .peak-row{margin-bottom:0.5rem}
-.peak-label{font-size:11px;color:var(--color-text-secondary,#666);margin-bottom:2px}
-.peak-input{width:100%;padding:5px 8px;border:0.5px solid var(--color-border-secondary,#ccc);border-radius:6px;background:var(--color-background-primary,#fff);color:var(--color-text-primary,#1a1a1a);font-size:13px;font-family:inherit}
-.peak-input.edited{border-color:#185FA5}
-.reset-btn{font-size:11px;color:var(--color-text-secondary,#666);background:none;border:none;cursor:pointer;padding:0;margin-top:6px;text-decoration:underline}
-.reset-btn:hover{color:var(--color-text-primary,#1a1a1a)}
-.warn{font-size:12px;color:#c0392b;margin-top:6px;min-height:16px}
+.peak-label{font-size:11px;color:var(--text-secondary);margin-bottom:2px}
+.peak-input{width:100%;padding:5px 8px;border:1px solid var(--border);border-radius:5px;background:var(--white);color:var(--text-primary);font-size:13px;font-family:'DM Sans',sans-serif}
+.peak-input:focus{outline:none;border-color:var(--navy)}
+.peak-input.edited{border-color:var(--maroon)}
+.reset-btn{font-size:11px;color:var(--text-secondary);background:none;border:none;cursor:pointer;padding:0;margin-top:6px;text-decoration:underline;font-family:'DM Sans',sans-serif}
+.reset-btn:hover{color:var(--maroon)}
+.warn{font-size:12px;color:var(--orange);margin-top:8px;min-height:16px}
+
+/* Summary table */
+.table-wrap{overflow-x:auto}
 table{width:100%;border-collapse:collapse;font-size:13px}
-th{text-align:right;padding:7px 10px;border-bottom:0.5px solid var(--color-border-secondary,#ccc);color:var(--color-text-secondary,#666);font-weight:500}
-th:first-child{text-align:left}
-td{padding:7px 10px;border-bottom:0.5px solid var(--color-border-tertiary,#eee);text-align:right;font-variant-numeric:tabular-nums}
-td:first-child{text-align:left;font-weight:500}
-.total-row td{border-top:0.5px solid var(--color-border-secondary,#ccc);border-bottom:none;font-weight:500}
+thead th{text-align:right;padding:8px 12px;border-bottom:2px solid var(--border);color:var(--text-secondary);font-weight:500;font-size:12px;white-space:nowrap}
+thead th:first-child{text-align:left}
+tbody td{padding:8px 12px;border-bottom:1px solid var(--border-light);text-align:right;font-variant-numeric:tabular-nums}
+tbody td:first-child{text-align:left;font-weight:500}
+tbody tr:last-child td{border-top:2px solid var(--border);border-bottom:none;font-weight:500;background:var(--stone)}
+
+/* Next button */
+.actions{display:flex;justify-content:flex-end;margin-top:1.5rem}
+.btn-primary{background:var(--maroon);color:var(--white);border:none;padding:10px 28px;border-radius:6px;font-size:14px;font-family:'DM Sans',sans-serif;font-weight:500;cursor:pointer;transition:opacity 0.15s}
+.btn-primary:hover{opacity:0.88}
 </style>
+</head>
+<body>
 
-<h1>Contact centre traffic profile</h1>
-<p class="subtitle">Set your monthly interaction volumes and channel split. Peak estimates are pre-filled and editable.</p>
+<header class="header">
+  <!-- Replace src with path to your logo file -->
+  <img src="logo.png" alt="babelforce">
+  <span class="header-title">Contact Centre Business Case Calculator</span>
+</header>
 
-<div class="section">
-  <h2>Average monthly inbound interactions</h2>
-  <div class="field">
-    <label>Average per month tickets and requests of all kinds</label>
-    <input type="number" id="total" value="10000" min="1" oninput="onTotalChange()">
+<nav class="progress-bar">
+  <div class="step active"><div class="step-num">1</div><span class="step-label">Traffic profile</span></div>
+  <div class="step-divider"></div>
+  <div class="step"><div class="step-num">2</div><span class="step-label">Automation cases</span></div>
+  <div class="step-divider"></div>
+  <div class="step"><div class="step-num">3</div><span class="step-label">Agent profile</span></div>
+  <div class="step-divider"></div>
+  <div class="step"><div class="step-num">4</div><span class="step-label">Business case</span></div>
+</nav>
+
+<main class="main">
+
+  <div class="page-title">
+    <h1>Your contact centre traffic profile</h1>
+    <p>Tell us about your inbound volumes. We'll use this to size your automation and calculate your business case.</p>
   </div>
-</div>
 
-<div class="section">
-  <h2>Channel split</h2>
-  <p style="font-size:12px;color:var(--color-text-secondary,#666);margin-bottom:1rem">Adjust sliders to set each channel's share. Other absorbs any remainder. Blue border = manually edited value.</p>
-  <div class="grid4" id="channels_grid"></div>
-  <div class="warn" id="pct_warn"></div>
-</div>
-
-<div class="section">
-  <h2>Traffic profile summary</h2>
-  <div style="overflow-x:auto">
-    <table id="summary_table">
-      <thead>
-        <tr>
-          <th style="text-align:left">Channel</th>
-          <th>Avg / month</th>
-          <th>Peak month</th>
-          <th>Avg / day</th>
-          <th>Peak day</th>
-          <th>Avg / hour</th>
-          <th>Peak hour</th>
-        </tr>
-      </thead>
-      <tbody id="summary_tbody"></tbody>
-    </table>
+  <div class="section">
+    <div class="section-title">Average monthly inbound interactions</div>
+    <p class="section-sub">Average per month tickets and requests of all kinds across all channels.</p>
+    <div style="max-width:320px">
+      <div class="field">
+        <label>Total interactions per month</label>
+        <input type="number" id="total" value="10000" min="1" oninput="onTotalChange()">
+      </div>
+    </div>
   </div>
-</div>
+
+  <div class="section">
+    <div class="section-title">Channel split</div>
+    <p class="section-sub">Adjust sliders to set each channel's share. The Other channel absorbs any remainder. Peak estimates are pre-filled — edit directly to override. A coloured border indicates a manually edited value.</p>
+    <div class="grid4" id="channels_grid"></div>
+    <div class="warn" id="pct_warn"></div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Traffic profile summary</div>
+    <p class="section-sub">Calculated from your inputs above. Peak estimates use a 2× uplift for peak month, and 3× for peak day and peak hour.</p>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th style="text-align:left">Channel</th>
+            <th>Avg / month</th>
+            <th>Peak month</th>
+            <th>Avg / day</th>
+            <th>Peak day</th>
+            <th>Avg / hour</th>
+            <th>Peak hour</th>
+          </tr>
+        </thead>
+        <tbody id="summary_tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="actions">
+    <button class="btn-primary">Next: automation cases →</button>
+  </div>
+
+</main>
 
 <script>
-var WD=20, HPD=8, PEAK_FACTOR=3;
+var WD=20,HPD=8,PEAK_FACTOR=3;
 var CHANNELS=[
-  {id:'voice',name:'Voice',pct:40,color:'#185FA5'},
-  {id:'email',name:'Email',pct:30,color:'#0F6E56'},
-  {id:'chat', name:'Chat', pct:20,color:'#854F0B'},
-  {id:'other',name:'Other',pct:10,color:'#993556'}
+  {id:'voice',name:'Voice',pct:40,color:'var(--maroon)'},
+  {id:'email',name:'Email',pct:30,color:'var(--navy)'},
+  {id:'chat', name:'Chat', pct:20,color:'#0F6E56'},
+  {id:'other',name:'Other',pct:10,color:'var(--text-secondary)'}
 ];
 var overrides={};
-CHANNELS.forEach(function(c){
-  overrides[c.id]={peakMonth:null,peakDay:null,peakHour:null};
-});
+CHANNELS.forEach(function(c){overrides[c.id]={peakMonth:null,peakDay:null,peakHour:null};});
 
 function calcEstimates(vol){
-  var peakMonth=Math.round(vol*2);
-  var peakDay=Math.round((vol/WD)*PEAK_FACTOR);
-  var peakHour=Math.round((peakDay/HPD)*PEAK_FACTOR);
-  return{peakMonth:peakMonth,peakDay:peakDay,peakHour:peakHour};
+  return{
+    peakMonth:Math.round(vol*2),
+    peakDay:Math.round((vol/WD)*PEAK_FACTOR),
+    peakHour:Math.round((vol/WD/HPD)*PEAK_FACTOR)
+  };
 }
-
 function getVol(ch){
-  var total=+document.getElementById('total').value||0;
-  return Math.round(total*ch.pct/100);
+  return Math.round((+document.getElementById('total').value||0)*ch.pct/100);
 }
-
 function buildChannelUI(){
   var grid=document.getElementById('channels_grid');
   grid.innerHTML='';
@@ -112,31 +203,23 @@ function buildChannelUI(){
         '<span class="pct-val" id="pv_'+ch.id+'">'+ch.pct+'%</span>'+
       '</div>'+
       '<div class="vol-large" id="vv_'+ch.id+'">'+vol.toLocaleString()+'</div>'+
-      '<div class="vol-sub">avg interactions / month</div>'+
-      '<div class="peak-row">'+
-        '<div class="peak-label">Peak month</div>'+
-        '<input type="number" class="peak-input'+(overrides[ch.id].peakMonth!==null?' edited':'')+'" id="pm_'+ch.id+'" value="'+pm+'" oninput="onPeakEdit(\''+ch.id+'\',\'peakMonth\')">'+
-      '</div>'+
-      '<div class="peak-row">'+
-        '<div class="peak-label">Peak day</div>'+
-        '<input type="number" class="peak-input'+(overrides[ch.id].peakDay!==null?' edited':'')+'" id="pd_'+ch.id+'" value="'+pd+'" oninput="onPeakEdit(\''+ch.id+'\',\'peakDay\')">'+
-      '</div>'+
-      '<div class="peak-row">'+
-        '<div class="peak-label">Peak hour</div>'+
-        '<input type="number" class="peak-input'+(overrides[ch.id].peakHour!==null?' edited':'')+'" id="ph_'+ch.id+'" value="'+ph+'" oninput="onPeakEdit(\''+ch.id+'\',\'peakHour\')">'+
-      '</div>'+
+      '<div class="vol-sub">avg / month</div>'+
+      '<div class="peak-row"><div class="peak-label">Peak month</div>'+
+        '<input type="number" class="peak-input'+(overrides[ch.id].peakMonth!==null?' edited':'')+'" id="pm_'+ch.id+'" value="'+pm+'" oninput="onPeakEdit(\''+ch.id+'\',\'peakMonth\')"></div>'+
+      '<div class="peak-row"><div class="peak-label">Peak day</div>'+
+        '<input type="number" class="peak-input'+(overrides[ch.id].peakDay!==null?' edited':'')+'" id="pd_'+ch.id+'" value="'+pd+'" oninput="onPeakEdit(\''+ch.id+'\',\'peakDay\')"></div>'+
+      '<div class="peak-row"><div class="peak-label">Peak hour</div>'+
+        '<input type="number" class="peak-input'+(overrides[ch.id].peakHour!==null?' edited':'')+'" id="ph_'+ch.id+'" value="'+ph+'" oninput="onPeakEdit(\''+ch.id+'\',\'peakHour\')"></div>'+
       '<button class="reset-btn" onclick="resetChannel(\''+ch.id+'\')">Reset to estimates</button>';
     grid.appendChild(div);
   });
 }
-
 function onPeakEdit(chId,field){
   var elId=(field==='peakMonth'?'pm_':field==='peakDay'?'pd_':'ph_')+chId;
   overrides[chId][field]=+document.getElementById(elId).value;
   document.getElementById(elId).classList.add('edited');
   updateSummary();
 }
-
 function resetChannel(chId){
   overrides[chId]={peakMonth:null,peakDay:null,peakHour:null};
   var ch=CHANNELS.find(function(c){return c.id===chId;});
@@ -144,12 +227,9 @@ function resetChannel(chId){
   document.getElementById('pm_'+chId).value=est.peakMonth;
   document.getElementById('pd_'+chId).value=est.peakDay;
   document.getElementById('ph_'+chId).value=est.peakHour;
-  ['pm_','pd_','ph_'].forEach(function(p){
-    document.getElementById(p+chId).classList.remove('edited');
-  });
+  ['pm_','pd_','ph_'].forEach(function(p){document.getElementById(p+chId).classList.remove('edited');});
   updateSummary();
 }
-
 function onTotalChange(){
   CHANNELS.forEach(function(ch){
     var vol=getVol(ch);
@@ -161,7 +241,6 @@ function onTotalChange(){
   });
   updateSummary();
 }
-
 function onSliderChange(changedId){
   var newVal=+document.getElementById('sl_'+changedId).value;
   CHANNELS.find(function(c){return c.id===changedId;}).pct=newVal;
@@ -185,12 +264,10 @@ function onSliderChange(changedId){
   document.getElementById('pct_warn').textContent=Math.abs(sum-100)>0.5?'Channel percentages sum to '+sum+'% — should total 100%.':'';
   updateSummary();
 }
-
 function updateSummary(){
-  var total=+document.getElementById('total').value||0;
   var tbody=document.getElementById('summary_tbody');
   tbody.innerHTML='';
-  var sums=[0,0,0,0,0,0]; // avgMonth, peakMonth, avgDay, peakDay, avgHour, peakHour
+  var sums=[0,0,0,0,0,0];
   CHANNELS.forEach(function(ch){
     var vol=getVol(ch);
     var avgDay=Math.round(vol/WD);
@@ -207,13 +284,13 @@ function updateSummary(){
     tbody.appendChild(tr);
   });
   var tfoot=document.createElement('tr');
-  tfoot.className='total-row';
   var fhtml='<td>Total</td>';
   sums.forEach(function(v){fhtml+='<td>'+v.toLocaleString()+'</td>';});
   tfoot.innerHTML=fhtml;
   tbody.appendChild(tfoot);
 }
-
 buildChannelUI();
 updateSummary();
 </script>
+</body>
+</html>
