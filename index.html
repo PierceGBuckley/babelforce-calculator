@@ -3,45 +3,35 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>babelforce — Contact Centre Calculator</title>
+<title>babelforce — Contact Center Calculator</title>
 <link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,300;0,400;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 :root{
-  --maroon:#3A0823;
-  --navy:#181E32;
-  --stone:#F7F7F3;
-  --sand:#FBEACF;
-  --orange:#F94721;
-  --mint:#CAF2DD;
-  --mint-lite:#E8FCF5;
-  --lilac:#B2A9FD;
-  --white:#FFFFFF;
-  --text-primary:#181E32;
-  --text-secondary:#5a5f72;
-  --border:#ddddd8;
-  --border-light:#eeeee9;
+  --maroon:#3A0823;--navy:#181E32;--stone:#F7F7F3;--sand:#FBEACF;
+  --orange:#F94721;--mint:#CAF2DD;--mint-lite:#E8FCF5;--lilac:#B2A9FD;
+  --white:#FFFFFF;--text-primary:#181E32;--text-secondary:#5a5f72;
+  --border:#ddddd8;--border-light:#eeeee9;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'DM Sans',system-ui,sans-serif;font-size:14px;color:var(--text-primary);background:var(--stone);min-height:100vh}
 
 /* Header */
-.header{background:var(--white);border-bottom:1px solid var(--border);padding:0 2rem;height:56px;display:flex;align-items:center;justify-content:space-between}
+.header{background:var(--white);border-bottom:1px solid var(--border);padding:0 2rem;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}
 .header img{height:22px;width:auto}
-.header-title{font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text-secondary);font-weight:400}
+.header-title{font-size:13px;color:var(--text-secondary)}
 
 /* Progress bar */
-.progress-bar{background:var(--white);border-bottom:1px solid var(--border);padding:0 2rem;display:flex;align-items:center;gap:0;height:44px}
+.progress-bar{background:var(--white);border-bottom:1px solid var(--border);padding:0 2rem;display:flex;align-items:center;height:44px;position:sticky;top:56px;z-index:9}
 .step{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text-secondary);padding:0 1rem 0 0}
 .step:first-child{padding-left:0}
 .step-num{width:20px;height:20px;border-radius:50%;border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;flex-shrink:0}
+.step.done .step-num{background:var(--stone);border-color:var(--navy);color:var(--navy)}
 .step.active .step-num{background:var(--maroon);border-color:var(--maroon);color:var(--white)}
 .step.active .step-label{color:var(--text-primary);font-weight:500}
 .step-divider{width:24px;height:1px;background:var(--border);margin:0 4px;flex-shrink:0}
 
-/* Main layout */
+/* Main */
 .main{max-width:860px;margin:0 auto;padding:2rem 1.5rem 4rem}
-
-/* Page title */
 .page-title{margin-bottom:2rem}
 .page-title h1{font-family:'Spectral',serif;font-size:28px;font-weight:300;color:var(--navy);margin-bottom:6px}
 .page-title p{font-size:14px;color:var(--text-secondary);line-height:1.6}
@@ -51,23 +41,30 @@ body{font-family:'DM Sans',system-ui,sans-serif;font-size:14px;color:var(--text-
 .section-title{font-family:'Spectral',serif;font-size:18px;font-weight:300;color:var(--navy);margin-bottom:4px}
 .section-sub{font-size:13px;color:var(--text-secondary);margin-bottom:1.25rem;line-height:1.5}
 
-/* Fields */
-.field{margin-bottom:1rem}
-.field:last-child{margin-bottom:0}
-label{display:block;font-size:12px;color:var(--text-secondary);margin-bottom:4px;font-weight:400}
-input[type=number]{width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:6px;background:var(--white);color:var(--text-primary);font-size:14px;font-family:'DM Sans',sans-serif;transition:border-color 0.15s}
-input[type=number]:focus{outline:none;border-color:var(--navy)}
+/* Form elements */
+label{display:block;font-size:12px;color:var(--text-secondary);margin-bottom:4px}
+input[type=text],input[type=number],select{padding:8px 12px;border:1px solid var(--border);border-radius:6px;background:var(--white);color:var(--text-primary);font-size:14px;font-family:'DM Sans',sans-serif;transition:border-color 0.15s}
+input[type=text]:focus,input[type=number]:focus,select:focus{outline:none;border-color:var(--navy)}
 input[type=range]{width:100%;margin:6px 0;accent-color:var(--maroon)}
+select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%235a5f72' d='M1 1l5 5 5-5'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:28px;cursor:pointer}
 
-/* Grid layouts */
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+/* Step screens */
+.screen{display:none}
+.screen.active{display:block}
+
+/* Actions */
+.actions{display:flex;justify-content:space-between;margin-top:1.5rem}
+.btn-secondary{background:var(--white);color:var(--text-primary);border:1px solid var(--border);padding:10px 24px;border-radius:6px;font-size:14px;font-family:'DM Sans',sans-serif;cursor:pointer}
+.btn-secondary:hover{border-color:var(--navy)}
+.btn-primary{background:var(--maroon);color:var(--white);border:none;padding:10px 28px;border-radius:6px;font-size:14px;font-family:'DM Sans',sans-serif;font-weight:500;cursor:pointer}
+.btn-primary:hover{opacity:0.88}
+
+/* ── STEP 1 ── */
 .grid4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1rem}
-
-/* Channel cards */
 .channel{background:var(--stone);border:1px solid var(--border-light);border-radius:8px;padding:1rem}
 .channel-name{font-size:13px;font-weight:500;margin-bottom:0.75rem}
 .pct-row{display:flex;align-items:center;gap:8px;margin-bottom:6px}
-.pct-val{font-size:13px;font-weight:500;min-width:36px;text-align:right;color:var(--text-primary)}
+.pct-val{font-size:13px;font-weight:500;min-width:36px;text-align:right}
 .vol-large{font-family:'Spectral',serif;font-size:22px;font-weight:300;color:var(--navy);margin-top:6px}
 .vol-sub{font-size:11px;color:var(--text-secondary);margin-bottom:0.75rem}
 .peak-row{margin-bottom:0.5rem}
@@ -77,45 +74,78 @@ input[type=range]{width:100%;margin:6px 0;accent-color:var(--maroon)}
 .peak-input.edited{border-color:var(--maroon)}
 .reset-btn{font-size:11px;color:var(--text-secondary);background:none;border:none;cursor:pointer;padding:0;margin-top:6px;text-decoration:underline;font-family:'DM Sans',sans-serif}
 .reset-btn:hover{color:var(--maroon)}
-.warn{font-size:12px;color:var(--orange);margin-top:8px;min-height:16px}
+.s1-warn{font-size:12px;color:var(--orange);margin-top:8px;min-height:16px}
+.s1-table{width:100%;border-collapse:collapse;font-size:13px}
+.s1-table thead th{text-align:right;padding:8px 12px;border-bottom:2px solid var(--border);color:var(--text-secondary);font-weight:500;font-size:12px;white-space:nowrap}
+.s1-table thead th:first-child{text-align:left}
+.s1-table tbody td{padding:8px 12px;border-bottom:1px solid var(--border-light);text-align:right;font-variant-numeric:tabular-nums}
+.s1-table tbody td:first-child{text-align:left;font-weight:500}
+.s1-table tbody tr:last-child td{border-top:2px solid var(--border);border-bottom:none;font-weight:500;background:var(--stone)}
 
-/* Summary table */
-.table-wrap{overflow-x:auto}
-table{width:100%;border-collapse:collapse;font-size:13px}
-thead th{text-align:right;padding:8px 12px;border-bottom:2px solid var(--border);color:var(--text-secondary);font-weight:500;font-size:12px;white-space:nowrap}
-thead th:first-child{text-align:left}
-tbody td{padding:8px 12px;border-bottom:1px solid var(--border-light);text-align:right;font-variant-numeric:tabular-nums}
-tbody td:first-child{text-align:left;font-weight:500}
-tbody tr:last-child td{border-top:2px solid var(--border);border-bottom:none;font-weight:500;background:var(--stone)}
+/* ── STEP 2 ── */
+.industry-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0.75rem}
+.industry-card{border:1px solid var(--border);border-radius:8px;padding:0.875rem 1rem;cursor:pointer;background:var(--white);transition:border-color 0.15s;font-size:13px;font-weight:500;color:var(--text-primary)}
+.industry-card:hover{border-color:var(--navy)}
+.industry-selected{display:flex;align-items:center;justify-content:space-between;padding:0.875rem 1rem;background:var(--stone);border:1px solid var(--border);border-radius:8px}
+.industry-selected-name{font-size:14px;font-weight:500;color:var(--maroon)}
+.change-link{font-size:12px;color:var(--text-secondary);background:none;border:none;cursor:pointer;text-decoration:underline;font-family:'DM Sans',sans-serif;padding:0;margin-left:1.5rem}
+.change-link:hover{color:var(--navy)}
+.intent-table{width:100%;border-collapse:collapse;font-size:13px}
+.intent-table th{text-align:left;padding:7px 10px;border-bottom:2px solid var(--border);color:var(--text-secondary);font-size:12px;font-weight:500}
+.intent-table th.right{text-align:right}
+.intent-table td{padding:6px 8px;border-bottom:1px solid var(--border-light);vertical-align:middle}
+.intent-table input[type=text]{width:100%;border:1px solid transparent;background:transparent;padding:5px 6px;border-radius:4px;font-size:13px;font-family:'DM Sans',sans-serif}
+.intent-table input[type=text]:hover{border-color:var(--border)}
+.intent-table input[type=text]:focus{border-color:var(--navy);background:var(--white)}
+.intent-table input[type=number]{width:72px;text-align:right;padding:5px 8px;font-size:13px}
+.intent-table select{font-size:12px;padding:5px 24px 5px 8px;border-radius:4px}
+.intent-table select.full{color:#0F6E56;border-color:#CAF2DD;background-color:#E8FCF5}
+.intent-table select.partial{color:#854F0B;border-color:#FBEACF;background-color:#FEF6E8}
+.intent-table select.human{color:var(--text-secondary);border-color:var(--border);background-color:var(--white)}
+.del-btn{background:none;border:none;cursor:pointer;color:var(--border);font-size:16px;padding:4px 6px;border-radius:4px;line-height:1;transition:color 0.15s}
+.del-btn:hover{color:var(--orange)}
+.pct-total{display:flex;align-items:center;justify-content:flex-end;gap:8px;font-size:13px;margin-top:0.75rem}
+.pct-badge{padding:3px 10px;border-radius:20px;font-size:12px;font-weight:500}
+.pct-badge.ok{background:var(--mint);color:#0F6E56}
+.pct-badge.warn{background:#FBEACF;color:#854F0B}
+.pct-badge.err{background:#FDECEA;color:#c0392b}
+.add-btn{display:flex;align-items:center;gap:6px;background:none;border:1px dashed var(--border);border-radius:6px;padding:8px 14px;font-size:13px;color:var(--text-secondary);cursor:pointer;font-family:'DM Sans',sans-serif;transition:border-color 0.15s,color 0.15s;margin-top:0.75rem}
+.add-btn:hover{border-color:var(--navy);color:var(--navy)}
+.summary-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0.75rem;margin-top:1rem}
+.sum-card{background:var(--stone);border-radius:8px;padding:0.875rem 1rem}
+.sum-label{font-size:11px;color:var(--text-secondary);margin-bottom:4px}
+.sum-value{font-family:'Spectral',serif;font-size:22px;font-weight:300;color:var(--navy)}
+.sum-sub{font-size:11px;color:var(--text-secondary);margin-top:2px}
+.sum-card.highlight .sum-value{color:var(--maroon)}
 
-/* Next button */
-.actions{display:flex;justify-content:flex-end;margin-top:1.5rem}
-.btn-primary{background:var(--maroon);color:var(--white);border:none;padding:10px 28px;border-radius:6px;font-size:14px;font-family:'DM Sans',sans-serif;font-weight:500;cursor:pointer;transition:opacity 0.15s}
-.btn-primary:hover{opacity:0.88}
+/* Dialog */
+.dialog-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.35);display:flex;align-items:center;justify-content:center;z-index:100}
+.dialog{background:var(--white);border-radius:8px;padding:1.5rem;max-width:400px;width:90%;border:1px solid var(--border)}
+.dialog-title{font-family:'Spectral',serif;font-size:18px;font-weight:300;color:var(--navy);margin-bottom:0.5rem}
+.dialog-body{font-size:13px;color:var(--text-secondary);line-height:1.6;margin-bottom:1.25rem}
+.dialog-actions{display:flex;justify-content:flex-end;gap:0.75rem}
+.btn-dialog-cancel{background:var(--white);color:var(--text-primary);border:1px solid var(--border);padding:8px 20px;border-radius:6px;font-size:13px;font-family:'DM Sans',sans-serif;cursor:pointer}
+.btn-dialog-cancel:hover{border-color:var(--navy)}
+.btn-dialog-confirm{background:var(--maroon);color:var(--white);border:none;padding:8px 20px;border-radius:6px;font-size:13px;font-family:'DM Sans',sans-serif;cursor:pointer}
+.btn-dialog-confirm:hover{opacity:0.88}
 </style>
 </head>
 <body>
 
 <header class="header">
-  <!-- Replace src with path to your logo file -->
   <img src="logo.png" alt="babelforce">
-  <span class="header-title">Contact Centre Business Case Calculator</span>
+  <span class="header-title">Contact Center Business Case Calculator</span>
 </header>
 
-<nav class="progress-bar">
-  <div class="step active"><div class="step-num">1</div><span class="step-label">Traffic profile</span></div>
-  <div class="step-divider"></div>
-  <div class="step"><div class="step-num">2</div><span class="step-label">Automation cases</span></div>
-  <div class="step-divider"></div>
-  <div class="step"><div class="step-num">3</div><span class="step-label">Agent profile</span></div>
-  <div class="step-divider"></div>
-  <div class="step"><div class="step-num">4</div><span class="step-label">Business case</span></div>
-</nav>
+<nav class="progress-bar" id="progress_bar"></nav>
 
+<!-- ═══════════════════════════════════════════
+     STEP 1 — Traffic profile
+════════════════════════════════════════════ -->
+<div class="screen active" id="screen_1">
 <main class="main">
-
   <div class="page-title">
-    <h1>Your contact centre traffic profile</h1>
+    <h1>Your contact center traffic profile</h1>
     <p>Tell us about your inbound volumes. We'll use this to size your automation and calculate your business case.</p>
   </div>
 
@@ -123,158 +153,253 @@ tbody tr:last-child td{border-top:2px solid var(--border);border-bottom:none;fon
     <div class="section-title">Average monthly inbound interactions</div>
     <p class="section-sub">Average per month tickets and requests of all kinds across all channels.</p>
     <div style="max-width:320px">
-      <div class="field">
+      <div style="margin-bottom:1rem">
         <label>Total interactions per month</label>
-        <input type="number" id="total" value="10000" min="1" oninput="onTotalChange()">
+        <input type="number" id="s1_total" value="10000" min="1" oninput="s1_onTotalChange()">
       </div>
     </div>
   </div>
 
   <div class="section">
     <div class="section-title">Channel split</div>
-    <p class="section-sub">Adjust sliders to set each channel's share. The Other channel absorbs any remainder. Peak estimates are pre-filled — edit directly to override. A coloured border indicates a manually edited value.</p>
-    <div class="grid4" id="channels_grid"></div>
-    <div class="warn" id="pct_warn"></div>
+    <p class="section-sub">Adjust sliders to set each channel's share. The Other channel absorbs any remainder. A colored border indicates a manually edited peak value.</p>
+    <div class="grid4" id="s1_channels_grid"></div>
+    <div class="s1-warn" id="s1_pct_warn"></div>
   </div>
 
   <div class="section">
     <div class="section-title">Traffic profile summary</div>
     <p class="section-sub">Calculated from your inputs above. Peak estimates use a 2× uplift for peak month, and 3× for peak day and peak hour.</p>
-    <div class="table-wrap">
-      <table>
+    <div style="overflow-x:auto">
+      <table class="s1-table">
         <thead>
           <tr>
             <th style="text-align:left">Channel</th>
-            <th>Avg / month</th>
-            <th>Peak month</th>
-            <th>Avg / day</th>
-            <th>Peak day</th>
-            <th>Avg / hour</th>
-            <th>Peak hour</th>
+            <th>Avg / month</th><th>Peak month</th>
+            <th>Avg / day</th><th>Peak day</th>
+            <th>Avg / hour</th><th>Peak hour</th>
           </tr>
         </thead>
-        <tbody id="summary_tbody"></tbody>
+        <tbody id="s1_summary_tbody"></tbody>
       </table>
     </div>
   </div>
 
   <div class="actions">
-    <button class="btn-primary">Next: automation cases →</button>
+    <div></div>
+    <button class="btn-primary" onclick="goToStep(2)">Next: business type & intents →</button>
+  </div>
+</main>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     STEP 2 — Business type & intents
+════════════════════════════════════════════ -->
+<div class="screen" id="screen_2">
+<main class="main">
+  <div class="page-title">
+    <h1>Business type & caller intents</h1>
+    <p>Select your industry to load default caller intents. Then adjust the intent mix to match your contact center's actual call distribution.</p>
   </div>
 
+  <div class="section">
+    <div class="section-title">Business type</div>
+    <p class="section-sub" id="s2_industry_sub">Select the industry that best describes your business. This sets default caller intents for the next section.</p>
+    <div id="s2_industry_selected" style="display:none"></div>
+    <div id="s2_industry_grid_wrap"><div class="industry-grid" id="s2_industry_grid"></div></div>
+    <div id="s2_other_wrap" style="display:none;margin-top:1rem;max-width:320px">
+      <label>Describe your business type</label>
+      <input type="text" id="s2_other_label" placeholder="e.g. Healthcare, Manufacturing…" style="width:100%">
+    </div>
+  </div>
+
+  <div class="section" id="s2_intents_section" style="display:none">
+    <div class="section-title">Caller intent distribution</div>
+    <p class="section-sub">These are the most common reasons your customers call. Set the percentage for each and choose whether it can be fully automated, partially automated, or always needs a human. Percentages must total 100%.</p>
+    <table class="intent-table">
+      <thead>
+        <tr>
+          <th style="width:40%">Intent</th>
+          <th style="width:22%">Automation level</th>
+          <th class="right" style="width:14%">% of calls</th>
+          <th style="width:8%"></th>
+        </tr>
+      </thead>
+      <tbody id="s2_intent_tbody"></tbody>
+    </table>
+    <div class="pct-total">
+      <span style="font-size:12px;color:var(--text-secondary)">Total:</span>
+      <span class="pct-badge" id="s2_pct_badge">0%</span>
+    </div>
+    <button class="add-btn" onclick="s2_addIntent()">+ Add intent</button>
+    <div class="summary-grid" id="s2_intent_summary"></div>
+  </div>
+
+  <div class="actions">
+    <button class="btn-secondary" onclick="goToStep(1)">← Back</button>
+    <button class="btn-primary" onclick="goToStep(3)">Next: automation cases →</button>
+  </div>
 </main>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     STEP 3 placeholder
+════════════════════════════════════════════ -->
+<div class="screen" id="screen_3">
+<main class="main">
+  <div class="page-title">
+    <h1>Automation cases</h1>
+    <p>Coming soon.</p>
+  </div>
+  <div class="actions">
+    <button class="btn-secondary" onclick="goToStep(2)">← Back</button>
+    <div></div>
+  </div>
+</main>
+</div>
 
 <script>
-var WD=20,HPD=8,PEAK_FACTOR=3;
-var CHANNELS=[
+/* ── Navigation ── */
+var TOTAL_STEPS=5;
+var currentStep=1;
+
+var STEP_LABELS=['Traffic profile','Business type & intents','Automation cases','Agent profile','Business case'];
+
+function goToStep(n){
+  document.getElementById('screen_'+currentStep).classList.remove('active');
+  currentStep=n;
+  var s=document.getElementById('screen_'+currentStep);
+  if(s) s.classList.add('active');
+  else{
+    // placeholder for steps not yet built
+    document.getElementById('screen_'+currentStep) && document.getElementById('screen_'+currentStep).classList.add('active');
+  }
+  renderProgress();
+  window.scrollTo(0,0);
+}
+
+function renderProgress(){
+  var bar=document.getElementById('progress_bar');
+  bar.innerHTML='';
+  for(var i=1;i<=TOTAL_STEPS;i++){
+    var div=document.createElement('div');
+    var cls='step'+(i<currentStep?' done':i===currentStep?' active':'');
+    div.className=cls;
+    var numContent=i<currentStep?'✓':i;
+    div.innerHTML='<div class="step-num">'+numContent+'</div><span class="step-label">'+STEP_LABELS[i-1]+'</span>';
+    bar.appendChild(div);
+    if(i<TOTAL_STEPS){
+      var div2=document.createElement('div');
+      div2.className='step-divider';
+      bar.appendChild(div2);
+    }
+  }
+}
+
+/* ══════════════════════════════════════
+   STEP 1 — Traffic profile
+══════════════════════════════════════ */
+var S1_WD=20,S1_HPD=8,S1_PF=3;
+var S1_CHANNELS=[
   {id:'voice',name:'Voice',pct:40,color:'var(--maroon)'},
   {id:'email',name:'Email',pct:30,color:'var(--navy)'},
   {id:'chat', name:'Chat', pct:20,color:'#0F6E56'},
   {id:'other',name:'Other',pct:10,color:'var(--text-secondary)'}
 ];
-var overrides={};
-CHANNELS.forEach(function(c){overrides[c.id]={peakMonth:null,peakDay:null,peakHour:null};});
+var s1_overrides={};
+S1_CHANNELS.forEach(function(c){s1_overrides[c.id]={peakMonth:null,peakDay:null,peakHour:null};});
 
-function calcEstimates(vol){
-  return{
-    peakMonth:Math.round(vol*2),
-    peakDay:Math.round((vol/WD)*PEAK_FACTOR),
-    peakHour:Math.round((vol/WD/HPD)*PEAK_FACTOR)
-  };
+function s1_calcEst(vol){
+  return{peakMonth:Math.round(vol*2),peakDay:Math.round((vol/S1_WD)*S1_PF),peakHour:Math.round((vol/S1_WD/S1_HPD)*S1_PF)};
 }
-function getVol(ch){
-  return Math.round((+document.getElementById('total').value||0)*ch.pct/100);
+function s1_getVol(ch){
+  return Math.round((+document.getElementById('s1_total').value||0)*ch.pct/100);
 }
-function buildChannelUI(){
-  var grid=document.getElementById('channels_grid');
+function s1_buildChannels(){
+  var grid=document.getElementById('s1_channels_grid');
   grid.innerHTML='';
-  CHANNELS.forEach(function(ch){
-    var vol=getVol(ch);
-    var est=calcEstimates(vol);
-    var pm=overrides[ch.id].peakMonth!==null?overrides[ch.id].peakMonth:est.peakMonth;
-    var pd=overrides[ch.id].peakDay!==null?overrides[ch.id].peakDay:est.peakDay;
-    var ph=overrides[ch.id].peakHour!==null?overrides[ch.id].peakHour:est.peakHour;
+  S1_CHANNELS.forEach(function(ch){
+    var vol=s1_getVol(ch);
+    var est=s1_calcEst(vol);
+    var pm=s1_overrides[ch.id].peakMonth!==null?s1_overrides[ch.id].peakMonth:est.peakMonth;
+    var pd=s1_overrides[ch.id].peakDay!==null?s1_overrides[ch.id].peakDay:est.peakDay;
+    var ph=s1_overrides[ch.id].peakHour!==null?s1_overrides[ch.id].peakHour:est.peakHour;
     var div=document.createElement('div');
     div.className='channel';
     div.innerHTML=
       '<div class="channel-name" style="color:'+ch.color+'">'+ch.name+'</div>'+
-      '<div class="pct-row">'+
-        '<input type="range" min="0" max="100" step="1" value="'+ch.pct+'" id="sl_'+ch.id+'" oninput="onSliderChange(\''+ch.id+'\')">'+
-        '<span class="pct-val" id="pv_'+ch.id+'">'+ch.pct+'%</span>'+
-      '</div>'+
-      '<div class="vol-large" id="vv_'+ch.id+'">'+vol.toLocaleString()+'</div>'+
+      '<div class="pct-row"><input type="range" min="0" max="100" step="1" value="'+ch.pct+'" id="s1_sl_'+ch.id+'" oninput="s1_onSlider(\''+ch.id+'\')"><span class="pct-val" id="s1_pv_'+ch.id+'">'+ch.pct+'%</span></div>'+
+      '<div class="vol-large" id="s1_vv_'+ch.id+'">'+vol.toLocaleString()+'</div>'+
       '<div class="vol-sub">avg / month</div>'+
-      '<div class="peak-row"><div class="peak-label">Peak month</div>'+
-        '<input type="number" class="peak-input'+(overrides[ch.id].peakMonth!==null?' edited':'')+'" id="pm_'+ch.id+'" value="'+pm+'" oninput="onPeakEdit(\''+ch.id+'\',\'peakMonth\')"></div>'+
-      '<div class="peak-row"><div class="peak-label">Peak day</div>'+
-        '<input type="number" class="peak-input'+(overrides[ch.id].peakDay!==null?' edited':'')+'" id="pd_'+ch.id+'" value="'+pd+'" oninput="onPeakEdit(\''+ch.id+'\',\'peakDay\')"></div>'+
-      '<div class="peak-row"><div class="peak-label">Peak hour</div>'+
-        '<input type="number" class="peak-input'+(overrides[ch.id].peakHour!==null?' edited':'')+'" id="ph_'+ch.id+'" value="'+ph+'" oninput="onPeakEdit(\''+ch.id+'\',\'peakHour\')"></div>'+
-      '<button class="reset-btn" onclick="resetChannel(\''+ch.id+'\')">Reset to estimates</button>';
+      '<div class="peak-row"><div class="peak-label">Peak month</div><input type="number" class="peak-input'+(s1_overrides[ch.id].peakMonth!==null?' edited':'')+'" id="s1_pm_'+ch.id+'" value="'+pm+'" oninput="s1_onPeak(\''+ch.id+'\',\'peakMonth\')"></div>'+
+      '<div class="peak-row"><div class="peak-label">Peak day</div><input type="number" class="peak-input'+(s1_overrides[ch.id].peakDay!==null?' edited':'')+'" id="s1_pd_'+ch.id+'" value="'+pd+'" oninput="s1_onPeak(\''+ch.id+'\',\'peakDay\')"></div>'+
+      '<div class="peak-row"><div class="peak-label">Peak hour</div><input type="number" class="peak-input'+(s1_overrides[ch.id].peakHour!==null?' edited':'')+'" id="s1_ph_'+ch.id+'" value="'+ph+'" oninput="s1_onPeak(\''+ch.id+'\',\'peakHour\')"></div>'+
+      '<button class="reset-btn" onclick="s1_reset(\''+ch.id+'\')">Reset to estimates</button>';
     grid.appendChild(div);
   });
+  s1_updateSummary();
 }
-function onPeakEdit(chId,field){
-  var elId=(field==='peakMonth'?'pm_':field==='peakDay'?'pd_':'ph_')+chId;
-  overrides[chId][field]=+document.getElementById(elId).value;
+function s1_onPeak(id,field){
+  var elId=(field==='peakMonth'?'s1_pm_':field==='peakDay'?'s1_pd_':'s1_ph_')+id;
+  s1_overrides[id][field]=+document.getElementById(elId).value;
   document.getElementById(elId).classList.add('edited');
-  updateSummary();
+  s1_updateSummary();
 }
-function resetChannel(chId){
-  overrides[chId]={peakMonth:null,peakDay:null,peakHour:null};
-  var ch=CHANNELS.find(function(c){return c.id===chId;});
-  var est=calcEstimates(getVol(ch));
-  document.getElementById('pm_'+chId).value=est.peakMonth;
-  document.getElementById('pd_'+chId).value=est.peakDay;
-  document.getElementById('ph_'+chId).value=est.peakHour;
-  ['pm_','pd_','ph_'].forEach(function(p){document.getElementById(p+chId).classList.remove('edited');});
-  updateSummary();
+function s1_reset(id){
+  s1_overrides[id]={peakMonth:null,peakDay:null,peakHour:null};
+  var ch=S1_CHANNELS.find(function(c){return c.id===id;});
+  var est=s1_calcEst(s1_getVol(ch));
+  document.getElementById('s1_pm_'+id).value=est.peakMonth;
+  document.getElementById('s1_pd_'+id).value=est.peakDay;
+  document.getElementById('s1_ph_'+id).value=est.peakHour;
+  ['s1_pm_','s1_pd_','s1_ph_'].forEach(function(p){document.getElementById(p+id).classList.remove('edited');});
+  s1_updateSummary();
 }
-function onTotalChange(){
-  CHANNELS.forEach(function(ch){
-    var vol=getVol(ch);
-    document.getElementById('vv_'+ch.id).textContent=vol.toLocaleString();
-    var est=calcEstimates(vol);
-    if(overrides[ch.id].peakMonth===null) document.getElementById('pm_'+ch.id).value=est.peakMonth;
-    if(overrides[ch.id].peakDay===null)   document.getElementById('pd_'+ch.id).value=est.peakDay;
-    if(overrides[ch.id].peakHour===null)  document.getElementById('ph_'+ch.id).value=est.peakHour;
+function s1_onTotalChange(){
+  S1_CHANNELS.forEach(function(ch){
+    var vol=s1_getVol(ch);
+    document.getElementById('s1_vv_'+ch.id).textContent=vol.toLocaleString();
+    var est=s1_calcEst(vol);
+    if(s1_overrides[ch.id].peakMonth===null) document.getElementById('s1_pm_'+ch.id).value=est.peakMonth;
+    if(s1_overrides[ch.id].peakDay===null)   document.getElementById('s1_pd_'+ch.id).value=est.peakDay;
+    if(s1_overrides[ch.id].peakHour===null)  document.getElementById('s1_ph_'+ch.id).value=est.peakHour;
   });
-  updateSummary();
+  s1_updateSummary();
 }
-function onSliderChange(changedId){
-  var newVal=+document.getElementById('sl_'+changedId).value;
-  CHANNELS.find(function(c){return c.id===changedId;}).pct=newVal;
-  var sumExceptLast=0;
-  for(var i=0;i<CHANNELS.length-1;i++) sumExceptLast+=CHANNELS[i].pct;
-  var remainder=Math.max(0,100-sumExceptLast);
-  CHANNELS[CHANNELS.length-1].pct=remainder;
-  var lastId=CHANNELS[CHANNELS.length-1].id;
-  document.getElementById('sl_'+lastId).value=remainder;
-  document.getElementById('pv_'+lastId).textContent=remainder+'%';
-  CHANNELS.forEach(function(ch){
-    document.getElementById('pv_'+ch.id).textContent=ch.pct+'%';
-    var vol=getVol(ch);
-    document.getElementById('vv_'+ch.id).textContent=vol.toLocaleString();
-    var est=calcEstimates(vol);
-    if(overrides[ch.id].peakMonth===null) document.getElementById('pm_'+ch.id).value=est.peakMonth;
-    if(overrides[ch.id].peakDay===null)   document.getElementById('pd_'+ch.id).value=est.peakDay;
-    if(overrides[ch.id].peakHour===null)  document.getElementById('ph_'+ch.id).value=est.peakHour;
+function s1_onSlider(changedId){
+  var newVal=+document.getElementById('s1_sl_'+changedId).value;
+  S1_CHANNELS.find(function(c){return c.id===changedId;}).pct=newVal;
+  var sumExLast=0;
+  for(var i=0;i<S1_CHANNELS.length-1;i++) sumExLast+=S1_CHANNELS[i].pct;
+  var rem=Math.max(0,100-sumExLast);
+  S1_CHANNELS[S1_CHANNELS.length-1].pct=rem;
+  var lastId=S1_CHANNELS[S1_CHANNELS.length-1].id;
+  document.getElementById('s1_sl_'+lastId).value=rem;
+  document.getElementById('s1_pv_'+lastId).textContent=rem+'%';
+  S1_CHANNELS.forEach(function(ch){
+    document.getElementById('s1_pv_'+ch.id).textContent=ch.pct+'%';
+    var vol=s1_getVol(ch);
+    document.getElementById('s1_vv_'+ch.id).textContent=vol.toLocaleString();
+    var est=s1_calcEst(vol);
+    if(s1_overrides[ch.id].peakMonth===null) document.getElementById('s1_pm_'+ch.id).value=est.peakMonth;
+    if(s1_overrides[ch.id].peakDay===null)   document.getElementById('s1_pd_'+ch.id).value=est.peakDay;
+    if(s1_overrides[ch.id].peakHour===null)  document.getElementById('s1_ph_'+ch.id).value=est.peakHour;
   });
-  var sum=CHANNELS.reduce(function(a,c){return a+c.pct;},0);
-  document.getElementById('pct_warn').textContent=Math.abs(sum-100)>0.5?'Channel percentages sum to '+sum+'% — should total 100%.':'';
-  updateSummary();
+  var sum=S1_CHANNELS.reduce(function(a,c){return a+c.pct;},0);
+  document.getElementById('s1_pct_warn').textContent=Math.abs(sum-100)>0.5?'Channel percentages sum to '+sum+'% — should total 100%.':'';
+  s1_updateSummary();
 }
-function updateSummary(){
-  var tbody=document.getElementById('summary_tbody');
+function s1_updateSummary(){
+  var tbody=document.getElementById('s1_summary_tbody');
   tbody.innerHTML='';
   var sums=[0,0,0,0,0,0];
-  CHANNELS.forEach(function(ch){
-    var vol=getVol(ch);
-    var avgDay=Math.round(vol/WD);
-    var avgHour=Math.round(vol/WD/HPD);
-    var pm=+document.getElementById('pm_'+ch.id).value||0;
-    var pd=+document.getElementById('pd_'+ch.id).value||0;
-    var ph=+document.getElementById('ph_'+ch.id).value||0;
+  S1_CHANNELS.forEach(function(ch){
+    var vol=s1_getVol(ch);
+    var avgDay=Math.round(vol/S1_WD);
+    var avgHour=Math.round(vol/S1_WD/S1_HPD);
+    var pm=+document.getElementById('s1_pm_'+ch.id).value||0;
+    var pd=+document.getElementById('s1_pd_'+ch.id).value||0;
+    var ph=+document.getElementById('s1_ph_'+ch.id).value||0;
     var vals=[vol,pm,avgDay,pd,avgHour,ph];
     vals.forEach(function(v,i){sums[i]+=v;});
     var tr=document.createElement('tr');
@@ -289,8 +414,169 @@ function updateSummary(){
   tfoot.innerHTML=fhtml;
   tbody.appendChild(tfoot);
 }
-buildChannelUI();
-updateSummary();
+
+/* ══════════════════════════════════════
+   STEP 2 — Business type & intents
+══════════════════════════════════════ */
+var S2_INDUSTRIES=[
+  {id:'ecommerce',name:'Ecommerce / retail'},
+  {id:'utilities',name:'Utilities'},
+  {id:'financial',name:'Financial services'},
+  {id:'technology',name:'Technology'},
+  {id:'bpo',name:'BPO / MSP / CC outsourcing'},
+  {id:'telco',name:'Telco'},
+  {id:'travel',name:'Travel & tourism'},
+  {id:'insurance',name:'Insurance'},
+  {id:'other',name:'Other'}
+];
+var S2_DEFAULTS={
+  ecommerce:[
+    {label:'Where is my order (WISMO)',level:'full',pct:35},
+    {label:'Returns & exchanges',level:'partial',pct:20},
+    {label:'Payment queries & issues',level:'partial',pct:15},
+    {label:'Product questions',level:'partial',pct:10},
+    {label:'Other',level:'human',pct:20}
+  ],
+  generic:[
+    {label:'Self-service inquiry',level:'full',pct:30},
+    {label:'Assisted inquiry',level:'partial',pct:40},
+    {label:'Complex / human only',level:'human',pct:30}
+  ]
+};
+var s2_selectedIndustry=null;
+var s2_intents=[];
+var s2_pendingIndustry=null;
+
+function s2_getDefaults(id){
+  return(S2_DEFAULTS[id]||S2_DEFAULTS.generic).map(function(d){return{label:d.label,level:d.level,pct:d.pct};});
+}
+function s2_hasEdits(){
+  if(!s2_selectedIndustry) return false;
+  var def=s2_getDefaults(s2_selectedIndustry);
+  if(s2_intents.length!==def.length) return true;
+  for(var i=0;i<s2_intents.length;i++){
+    if(s2_intents[i].label!==def[i].label||s2_intents[i].level!==def[i].level||s2_intents[i].pct!==def[i].pct) return true;
+  }
+  return false;
+}
+function s2_buildGrid(){
+  var grid=document.getElementById('s2_industry_grid');
+  grid.innerHTML='';
+  S2_INDUSTRIES.forEach(function(ind){
+    var div=document.createElement('div');
+    div.className='industry-card';
+    div.textContent=ind.name;
+    div.onclick=function(){s2_onIndustryClick(ind.id);};
+    grid.appendChild(div);
+  });
+}
+function s2_onIndustryClick(id){
+  if(id===s2_selectedIndustry) return;
+  if(s2_selectedIndustry!==null&&s2_hasEdits()){
+    s2_pendingIndustry=id;
+    s2_showDialog();
+  } else {
+    s2_applyIndustry(id);
+  }
+}
+function s2_applyIndustry(id){
+  s2_selectedIndustry=id;
+  s2_intents=s2_getDefaults(id);
+  var ind=S2_INDUSTRIES.find(function(i){return i.id===id;});
+  document.getElementById('s2_industry_grid_wrap').style.display='none';
+  document.getElementById('s2_industry_sub').style.display='none';
+  var sel=document.getElementById('s2_industry_selected');
+  sel.style.display='flex';
+  sel.innerHTML='<span class="industry-selected-name">'+ind.name+'</span><button class="change-link" onclick="s2_openGrid()">Change industry</button>';
+  document.getElementById('s2_other_wrap').style.display=id==='other'?'block':'none';
+  document.getElementById('s2_intents_section').style.display='block';
+  s2_renderIntents();
+}
+function s2_openGrid(){
+  document.getElementById('s2_industry_grid_wrap').style.display='block';
+  document.getElementById('s2_industry_sub').style.display='block';
+  document.getElementById('s2_industry_selected').style.display='none';
+}
+function s2_showDialog(){
+  var o=document.createElement('div');
+  o.className='dialog-overlay';o.id='s2_dialog';
+  o.innerHTML='<div class="dialog"><div class="dialog-title">Switch industry?</div><div class="dialog-body">You have edited your intent list. Switching to a different industry will replace it with new defaults and your changes will be lost.</div><div class="dialog-actions"><button class="btn-dialog-cancel" onclick="s2_cancelDialog()">Keep current</button><button class="btn-dialog-confirm" onclick="s2_confirmDialog()">Switch industry</button></div></div>';
+  document.body.appendChild(o);
+}
+function s2_cancelDialog(){
+  var d=document.getElementById('s2_dialog');
+  if(d) d.remove();
+  s2_pendingIndustry=null;
+  var ind=S2_INDUSTRIES.find(function(i){return i.id===s2_selectedIndustry;});
+  if(ind){
+    document.getElementById('s2_industry_grid_wrap').style.display='none';
+    document.getElementById('s2_industry_sub').style.display='none';
+    var sel=document.getElementById('s2_industry_selected');
+    sel.style.display='flex';
+    sel.innerHTML='<span class="industry-selected-name">'+ind.name+'</span><button class="change-link" onclick="s2_openGrid()">Change industry</button>';
+  }
+}
+function s2_confirmDialog(){
+  var d=document.getElementById('s2_dialog');
+  if(d) d.remove();
+  var id=s2_pendingIndustry;
+  s2_pendingIndustry=null;
+  s2_applyIndustry(id);
+}
+function s2_renderIntents(){
+  var tbody=document.getElementById('s2_intent_tbody');
+  tbody.innerHTML='';
+  s2_intents.forEach(function(intent,idx){
+    var tr=document.createElement('tr');
+    tr.innerHTML=
+      '<td><input type="text" value="'+s2_esc(intent.label)+'" oninput="s2_intents['+idx+'].label=this.value;s2_updateSummary()"></td>'+
+      '<td>'+s2_levelSelect(idx,intent.level)+'</td>'+
+      '<td style="text-align:right"><input type="number" min="0" max="100" value="'+intent.pct+'" oninput="s2_intents['+idx+'].pct=+this.value;s2_updateSummary()"></td>'+
+      '<td style="text-align:center"><button class="del-btn" onclick="s2_deleteIntent('+idx+')" title="Remove">×</button></td>';
+    tbody.appendChild(tr);
+  });
+  s2_updateSummary();
+}
+function s2_levelSelect(idx,current){
+  var opts=['full','partial','human'];
+  var labels={full:'Full automation',partial:'Partial automation',human:'Human only'};
+  var html='<select class="'+current+'" onchange="s2_intents['+idx+'].level=this.value;this.className=this.value;s2_updateSummary()">';
+  opts.forEach(function(o){html+='<option value="'+o+'"'+(o===current?' selected':'')+'>'+labels[o]+'</option>';});
+  return html+'</select>';
+}
+function s2_addIntent(){
+  s2_intents.push({label:'New intent',level:'partial',pct:0});
+  s2_renderIntents();
+}
+function s2_deleteIntent(idx){
+  if(s2_intents.length<=1) return;
+  s2_intents.splice(idx,1);
+  s2_renderIntents();
+}
+function s2_updateSummary(){
+  var total=s2_intents.reduce(function(a,i){return a+(+i.pct||0);},0);
+  var badge=document.getElementById('s2_pct_badge');
+  badge.textContent=total+'%';
+  badge.className='pct-badge '+(total===100?'ok':Math.abs(total-100)<=5?'warn':'err');
+  var fp=0,pp=0,hp=0;
+  s2_intents.forEach(function(i){
+    if(i.level==='full') fp+=+i.pct||0;
+    else if(i.level==='partial') pp+=+i.pct||0;
+    else hp+=+i.pct||0;
+  });
+  var grid=document.getElementById('s2_intent_summary');
+  grid.innerHTML=
+    '<div class="sum-card highlight"><div class="sum-label">Fully automatable</div><div class="sum-value">'+fp+'%</div><div class="sum-sub">of call volume</div></div>'+
+    '<div class="sum-card"><div class="sum-label">Partially automatable</div><div class="sum-value">'+pp+'%</div><div class="sum-sub">of call volume</div></div>'+
+    '<div class="sum-card"><div class="sum-label">Human only</div><div class="sum-value">'+hp+'%</div><div class="sum-sub">of call volume</div></div>';
+}
+function s2_esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');}
+
+/* ── Init ── */
+renderProgress();
+s1_buildChannels();
+s1_updateSummary();
+s2_buildGrid();
 </script>
 </body>
 </html>
